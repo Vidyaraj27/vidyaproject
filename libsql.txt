@@ -1,0 +1,86 @@
+create database library;
+use library;
+---------user table-----------
+create table user(
+	uid int primary key ,
+    uname varchar(40)
+);
+
+
+insert into user values (1,"vidya"),(2,"raj"),(3,"hema"),(4,"megha"),(5,"madhu"),(6,"swathi"),(7,"ramesh"),(8,"mukesh"),(9,"lohith"),(10,ravi); 
+
+
+---------book table------------
+create table book(
+	bid int primary key,
+    bname varchar(50) not null,
+    author varchar(50) not null,
+    quantity int not null 
+);
+
+alter table book add check(quantity>0);
+
+
+insert into book values
+(1,"c","Balaguruswamy",24),
+(2,"java","Herbert Schildt",29),
+(3,"c++","Balaguruswamy",26),
+(4,"python","Reemathareja",30),
+(5,"OS","Wiley",15),
+(6,"IOT","Sudip mishra",20);
+
+
+-----------issue table----------
+
+create table issue(
+	issueid int primary key auto_increment,
+    uid int ,
+    bid int ,
+    issuedate varchar(15) not null,
+    foreign key (uid) references user(uid),
+    foreign key (bid) references book(bid)
+);
+
+insert into issue(uid,bid,issuedate) values 
+(1,1,"2023-08-15");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,268 @@
+package data;
+import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+public class Main {
+	static Connection getConnection(String dburl,String user,String password)throws SQLException, java.sql.SQLException{
+		Connection con=DriverManager.getConnection(dburl,user,password);
+		return con;
+	}
+	private static Connection con=null;
+	private static Statement st=null;
+	private static PreparedStatement  ps=null;
+	
+	public static void main(String[] args) throws SQLException {
+		Main ob=new Main();
+		String dburl="jdbc:mysql://localhost:3306/library";
+		String user="root";
+		String password="vidya";
+		try {
+			con=Main.getConnection(dburl,user,password);
+			System.out.println("-----------WELCOME TO LIBRARY-----------");
+			System.out.println("**********************************************************");
+			Scanner sr=new Scanner(System.in);
+			int flag=1;
+			System.out.println(".............Admin Login Details..........");
+			while(flag!=0)
+			{
+			System.out.print(" Username :--------");
+	        String userName = sr.nextLine();
+	        System.out.print(" Password :--------");
+	        String passw = sr.nextLine();
+	        if (userName.equals("admin") && passw.equals("pass")) 
+	        {
+	        	flag=0;
+	           System.out.println(" .............Login Successfull............ ");
+	           int fl=1;
+	        while(fl!=0) 
+	        {
+	       			System.out.println("Select the option which you want............?");
+	       			System.out.println("1.Add Book\n2.Delete Book\n3.Update Book\n4.Search Book\n5.Issue Book\n6.Exit");
+	       			System.out.println("Enter your option");
+	       			int ch=sr.nextInt();
+	       			switch(ch)
+	       			{
+	       			   case 1:ob.add_book();
+	       			          break;
+	       			   case 2:ob.delete_book();
+	       			          break;
+	       			   case 3:ob.update_book();
+	       			          break;
+	       			   case 4:ob.search_book();
+	       			          break;
+	       			   case 5:ob.issue_book();
+	       			          break;
+	       			   case 6:System.out.println("******--THANK YOU--******");
+	       			          fl=0;
+	       			          break;
+	       			   default:System.out.println("Entered option is wrong");      
+	       			}
+	       			
+	       		}
+	           }
+			else
+			{
+				System.out.println("Invalid Username or Password");
+				System.out.println("-------Enter Correct details to login-------");
+			}
+			
+		}
+		}
+	
+		
+		catch(SQLException e) 
+		{
+				e.printStackTrace();
+		}
+	}
+	
+	//inserting book function ------------------------------
+	
+	private static void add_book() throws SQLException
+	{
+	   String sql ="insert into book(bid,bname,author,quantity) values (?,?,?,?)";
+	   PreparedStatement ps=con.prepareStatement(sql);
+	   Scanner sc=new Scanner(System.in);
+	   System.out.println("---------Details to Add--------- ");
+	   System.out.println("Enetr book number");
+	   ps.setInt(1,sc.nextInt());
+	   System.out.println("Enetr book name");
+	   ps.setString(2,sc.next());
+	   System.out.println("Enetr author name");
+	   ps.setString(3,sc.next());
+	   System.out.println("Enetr book quantity");
+	   ps.setInt(4,sc.nextInt());
+	   int rows =ps.executeUpdate();
+	   if(rows>0)
+	   {
+	     System.out.println("Record inserted successfully");
+	   }
+	}
+	
+	//deleting book function----------------------------------
+	
+	private void delete_book() throws SQLException 
+	{
+		String sql = "delete from book where bid = ?";
+		   PreparedStatement ps = con.prepareStatement(sql);
+		   System.out.println("---------Details to Delete--------- ");
+		   System.out.println("Enter book number");
+		   Scanner sr= new Scanner(System.in);
+		   ps.setInt(1,sr.nextInt());  
+		        int rows = ps.executeUpdate();
+		        if(rows> 0)
+		        {
+		            System.out.println(rows + "  row affected");
+		            System.out.println("Selected book deleted successfully");
+		        }
+		        else
+		        {
+		            System.out.println("Book not found");
+		        }	
+	}
+	
+
+	//updating book details function...........
+	
+	private static void update_book() throws SQLException
+	{
+		Scanner se=new Scanner(System.in);
+		int f=1;
+		while(f!=0)
+		{
+		System.out.println("Enter the option which you want to update.............");		
+		System.out.println("1.Book Name....");
+		System.out.println("2.Author Name....");
+		System.out.println("3.Book Quantity....");
+		int ch1=se.nextInt();
+		switch(ch1)
+		{
+		case 1:String sql1 = "UPDATE book set bname=? WHERE bid=?";
+		       PreparedStatement ps1 = con.prepareStatement(sql1);
+		       System.out.println("---------Details to Update--------- ");
+               System.out.println("Enter book number ");
+               int bid1=se.nextInt();
+               System.out.println("Enter a new book name");
+               String bname= se.next();
+               ps1.setString(1,bname);
+               ps1.setInt(2,bid1);
+               int numberOfRow1 = ps1.executeUpdate();
+               System.out.println(numberOfRow1 + " row is updated..");
+               System.out.println("Do you want to update other details?...press(yes/no)");
+               String choice=se.next();
+               if(choice.equals("no"))
+               {
+            	   f=0;
+               }
+		       break;
+		case 2:String sql2 = "UPDATE book set author=? WHERE bid=?";
+	           PreparedStatement ps2 = con.prepareStatement(sql2);
+	           System.out.println("---------Details to Update--------- ");
+               System.out.println("Enter book number ");
+               int bid=se.nextInt();
+               System.out.println("Enter a new author name");
+	           String author= se.next();
+	           ps2.setString(1,author);
+	           ps2.setInt(2,bid);
+	           int numberOfRow2 = ps2.executeUpdate();
+	           System.out.println(numberOfRow2 + " row is updated..");
+	           System.out.println("Do you want to update other details?...press(yes/no)");
+               String choice1=se.next();
+               if(choice1.equals("no"))
+               {
+            	   f=0;
+               }
+		       break;
+		case 3:String sql3 = "UPDATE book set quantity=? WHERE bid=?";
+		       PreparedStatement ps3 = con.prepareStatement(sql3);
+		       System.out.println("---------Details to Update--------- ");
+	           System.out.println("Enter book number ");
+	           int bid3=se.nextInt();
+	           System.out.println("Enter a new quantity");
+		       int quantity= se.nextInt();
+		       ps3.setInt(1,quantity);
+		       ps3.setInt(2,bid3);
+		       int numberOfRow3 = ps3.executeUpdate();
+		       System.out.println(numberOfRow3 + " row is updated..");
+		       System.out.println("Do you want to update other details?...press(yes/no)");
+               String choice2=se.next();
+               if(choice2.equals("no"))
+               {
+            	   f=0;
+               }
+		       break;
+		default:System.out.println("Entered option is wrong............\n-----Please select correct option-----\n----------------");
+		        
+		}
+	}
+}
+
+	
+	//Searching book function-----------------------------
+	
+	private static  void search_book() throws SQLException 
+	{
+		   String sql ="select * from book where bname=? and author=?";
+		   PreparedStatement  ps= con.prepareStatement(sql);
+		   Scanner s=new Scanner(System.in);
+		   System.out.println("---------Details to Search---------");
+		   System.out.println("Enetr book name");
+		   ps.setString(1,s.next());
+		   System.out.println("Enetr author name");
+		   ps.setString(2,s.next());
+		   ResultSet rs =ps.executeQuery();
+		   if(rs.next())
+		   {
+			   System.out.println("Book number = " + rs.getInt(1));
+			   System.out.println("Book name = " + rs.getString(2));
+			   System.out.println("Author name = " + rs.getString(3));
+			   System.out.println("Quantity = " + rs.getInt(4));  
+		   }
+		   else
+		   {
+			   System.out.println("Book number = "); 
+		   }
+		   
+	}
+    
+	//issuing book function--------------------
+	
+	private void issue_book() throws SQLException 
+	{
+		Scanner sc=new Scanner(System.in);
+		System.out.println("---------Details to Issue--------- ");
+		System.out.println("Enter user id: ");
+    	int ud=sc.nextInt();
+    	System.out.println("Enter book id: ");
+    	int bd=sc.nextInt();
+    	System.out.println("Enter issue date: (YYYY-MM-DD)");
+    	String idate=sc.next();
+    	          	
+    	// ISSUE BOOK QUERY
+    	String q1="Insert into issue(uid,bid,issuedate) values(?,?,?)";
+    	
+    	PreparedStatement p1=con.prepareStatement(q1);
+    	p1.setInt(1, ud);
+    	p1.setInt(2, bd);
+    	p1.setString(3, idate);
+    	
+    	// UPDATE BOOK QUERY
+    	String q2="Update book set quantity=quantity-1 where bid=?";
+    	PreparedStatement p2=con.prepareStatement(q2);
+    	p2.setInt(1, bd);
+    	p1.executeUpdate();
+    	p2.executeUpdate();
+    	
+    	System.out.println("*********Book Issued Successfully*********");
+
+    }
+}
+    
+
+		
+		
+
