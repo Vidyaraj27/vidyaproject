@@ -224,7 +224,7 @@ public class Main {
 		   }
 		   else
 		   {
-			   System.out.println("Book number = "); 
+			   System.out.println("Book not found"); 
 		   }
 		   
 	}
@@ -234,31 +234,63 @@ public class Main {
 	private void issue_book() throws SQLException 
 	{
 		Scanner sc=new Scanner(System.in);
-		System.out.println("---------Details to Issue--------- ");
-		System.out.println("Enter user id: ");
-    	int ud=sc.nextInt();
-    	System.out.println("Enter book id: ");
-    	int bd=sc.nextInt();
-    	System.out.println("Enter issue date: (YYYY-MM-DD)");
-    	String idate=sc.next();
-    	          	
-    	// ISSUE BOOK QUERY
-    	String q1="Insert into issue(uid,bid,issuedate) values(?,?,?)";
-    	
-    	PreparedStatement p1=con.prepareStatement(q1);
-    	p1.setInt(1, ud);
-    	p1.setInt(2, bd);
-    	p1.setString(3, idate);
-    	
-    	// UPDATE BOOK QUERY
-    	String q2="Update book set quantity=quantity-1 where bid=?";
-    	PreparedStatement p2=con.prepareStatement(q2);
-    	p2.setInt(1, bd);
-    	p1.executeUpdate();
-    	p2.executeUpdate();
-    	
-    	System.out.println("*********Book Issued Successfully*********");
-
+		
+		System.out.println("Enter Book id to check availability");
+		int av=sc.nextInt();
+		String sql1 ="select quantity from book where bid=?";
+		PreparedStatement ps2 = con.prepareStatement(sql1);
+		ps2.setInt(1,av);
+	    ResultSet rs =ps2.executeQuery();
+	    if(rs.next())
+	    {
+	    
+			  int quant=rs.getInt("quantity");
+			  boolean ck= quant>0;
+			  System.out.println(ck);
+			  int fl2=1;
+			  
+			  while(ck && fl2!=0)
+			  {
+				
+				System.out.println("Book is ailable");
+				
+					fl2=0;
+			    System.out.println("---------Details to Issue--------- ");
+				System.out.println("Enter user id: ");
+		    	int ud=sc.nextInt();
+		    	System.out.println("Enter book id: ");
+		    	int bd=sc.nextInt();
+		    	System.out.println("Enter issue date: (YYYY-MM-DD)");
+		    	String idate=sc.next();
+		    	          	
+		    	// ISSUE BOOK QUERY
+		    	String q1="Insert into issue(uid,bid,issuedate) values(?,?,?)";
+		    	
+		    	PreparedStatement p1=con.prepareStatement(q1);
+		    	p1.setInt(1, ud);
+		    	p1.setInt(2, bd);
+		    	p1.setString(3, idate);
+		    	
+		    	// UPDATE BOOK QUERY
+		    	String q2="Update book set quantity=quantity-1 where bid=?";
+		    	PreparedStatement p2=con.prepareStatement(q2);
+		    	p2.setInt(1, bd);
+		    	p1.executeUpdate();
+		    	p2.executeUpdate();
+		    	
+		    	System.out.println("*********Book Issued Successfully*********");
+			  }
+			 if(fl2==1)
+			 {
+				 System.out.println("Sorry....!!! book is not available...");
+			 }
+	    }
+	    else
+	    {
+	    	System.out.println("Book not found...........");
+	    }
+	
+		
     }
 }
     
